@@ -66,6 +66,17 @@ function isDataFile(filename) {
     filename.split('.')[1] == 'xls')
 }
 
+function findWithAttr(array, attr, value) {
+    for(var i = 0; i < array.length; i += 1) {
+        if(array[i][attr] === value) {
+            console.log(array[i][attr]);
+            return i;
+        }
+    }
+    return -1;
+}
+
+
 // start a blank fishes.json file
 //fs.writeFile('.files/fishes.json', '', function(){console.log('done')});
 
@@ -86,18 +97,23 @@ fs.readdirAsync('./files/').then(function(filenames) {
 
       var bioData = "";
 
-      for (var j = 0; j < files[i].length; j++) {
+      var order = ["Webb", "Best", "Hegeman", "Premo", "Reishus"];
 
-        var file = files[i][j];
+      for (var j = 0; j <= order[i].length; j++) {
+
+        var x = findWithAttr(files[i], 'Last Name', order[j]);
+        console.log(x);
+
+        var file = files[i][x];
         var firstname = file['First Name'];
         var lastname = file['Last Name'];
         var title = file.Title;
         var bio = file.Bio;
-        var org = file['Organization Name'];
+        var org = file['Organization Name'] ? file['Organization Name'] : "&nbsp;" ;
         var linkedin = file['Linkedin URL'];
+        var website1 = file['Website'] ? file['Website'] : "&nbsp;";
+        var website2 = file['Website 2'] ? file['Website 2'] : "&nbsp;";
 
-
-        console.log(file);
 
         var template = "<div class='col-md-3'> \
 			      <div class='speaker'> \
@@ -117,7 +133,9 @@ fs.readdirAsync('./files/').then(function(filenames) {
 						<div class='speakerName'>" + firstname + " " + lastname + "</div> \
 						<div class='speakerTitle'>" + title + "</div> \
 						<div class='speakerCompany'>" + org + "</div> \
-				    <div class='speakerSocial'> \
+            <div class='website1'><a target='_blank' href='" + website1 + "'>" + website1 + "</a></div> \
+            <div class='website1'><a target='_blank' href='" + website2 + "'>" + website2 + "</a></div> \
+				    <div class='speakerSocial " + (linkedin ? " " : "hideSocial")  + "'> \
 				      <div class='speakerLinkedin'> \
 				        <a target='_blank' href='" + linkedin + "'><img src='https://www.arctravelconnect.com/globalassets/home2/2019/svg/LINKEDIN-ICON.svg' alt=''></a> \
 				      </div> \
