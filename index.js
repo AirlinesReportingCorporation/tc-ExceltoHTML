@@ -1,5 +1,7 @@
 if (typeof require !== 'undefined') XLSX = require('xlsx');
 
+var moment = require('moment');
+
 var fs = require('fs'),
   path = require('path'),
   filePath = path.join(__dirname, 'files/speakers.xls'),
@@ -67,13 +69,25 @@ function isDataFile(filename) {
 }
 
 function findWithAttr(array, attr, value) {
-    for(var i = 0; i < array.length; i += 1) {
-        if(array[i][attr] === value) {
-            console.log(array[i][attr]);
-            return i;
-        }
+  for (var i = 0; i < array.length; i += 1) {
+    console.log(attr);
+    console.log(value);
+    if (array[i][attr] === value) {
+      console.log(array[i][attr]);
+      return i;
     }
+  }
+  return -1;
+}
+
+function compareColumn( a, b ) {
+  if ( a['Start Time'] < b['Start Time'] ){
     return -1;
+  }
+  if ( a['Start Time'] > b['Start Time'] ){
+    return 1;
+  }
+  return 0;
 }
 
 
@@ -91,15 +105,20 @@ fs.readdirAsync('./files/').then(function(filenames) {
 
   for (var i = 0; i < fileNames.length; i++) {
     var name = fileNames[i];
-    if (name.split('.')[1] == 'xls') {
+    var filename = name.split('.')[0];
+    var extension = name.split('.')[1];
+
+    if (filename == 'speakers' && extension == 'xls') {
 
       var templateData = "";
 
       var bioData = "";
 
-      var order = ["Webb", "Best", "Hegeman", "Premo", "Reishus"];
+      var order = ["Webb", "Simi", "Kirby", "Barth", "Best", "D'Astolfo", "Hegeman", "Premo", "Reishus" ];
 
-      for (var j = 0; j <= order[i].length; j++) {
+      for (var j = 0; j < order.length; j++) {
+
+        console.log(order.length);
 
         var x = findWithAttr(files[i], 'Last Name', order[j]);
         console.log(x);
@@ -109,33 +128,33 @@ fs.readdirAsync('./files/').then(function(filenames) {
         var lastname = file['Last Name'];
         var title = file.Title;
         var bio = file.Bio;
-        var org = file['Organization Name'] ? file['Organization Name'] : "&nbsp;" ;
+        var org = file['Organization Name'] ? file['Organization Name'] : "&nbsp;";
         var linkedin = file['Linkedin URL'];
         var website1 = file['Website'] ? file['Website'] : "&nbsp;";
         var website2 = file['Website 2'] ? file['Website 2'] : "&nbsp;";
 
 
         var template = "<div class='col-md-3'> \
-			      <div class='speaker'> \
-			        <div class='speakerImage'><a href='#' data-featherlight='#" + firstname + "-" + lastname + "-bio'><img src='https://www2.arccorp.com/globalassets/home2/2019/speakers/" + firstname.toLowerCase() + "-" + lastname.toLowerCase() + ".jpg' alt='" + firstname + "-" + lastname + "'></a></div> \
-			        <div class='speakerName'>" + firstname + " " + lastname + "</div> \
+			      <div id='" + firstname.toLowerCase() + "-" + lastname.replace("'", "").toLowerCase() + "' class='speaker'> \
+			        <div class='speakerImage'><a href='#' data-featherlight='#" + firstname + "-" + lastname.replace("'", "") + "-bio'><img src='https://www2.arccorp.com/globalassets/home2/2019/speakers/" + firstname.toLowerCase() + "-" + lastname.replace("'", "").toLowerCase() + ".jpg' alt='" + firstname + "-" + lastname.replace("'", "") + "'></a></div> \
+			        <div class='speakerName'>" + firstname + " " + lastname.replace("'", "&apos;") + "</div> \
 			        <div class='speakerTitle'>" + title + "</div> \
 			        <div class='speakerCompany'>" + org + "</div> \
-							<a class='ctaBtn' href='#' data-featherlight='#" + firstname + "-" + lastname + "-bio'>View Profile</a> \
+							<a class='ctaBtn' href='#' data-featherlight='#" + firstname + "-" + lastname.replace("'", "") + "-bio'>View Profile</a> \
 			      </div> \
 			    </div>";
 
-        var bioTemplate = "<div id='" + firstname + "-" + lastname + "-bio' class='speakerProfile'> \
+        var bioTemplate = "<div id='" + firstname + "-" + lastname.replace("'", "") + "-bio' class='speakerProfile'> \
 				  <div class='speaker'> \
 					<div class='row'>\
 					<div class='col-md-4' style='text-align:center'>\
-						<div class='speakerImage'><img src='https://www2.arccorp.com/globalassets/home2/2019/speakers/" + firstname.toLowerCase() + "-" + lastname.toLowerCase() + ".jpg' alt='" + firstname + "-" + lastname + "'></div> \
-						<div class='speakerName'>" + firstname + " " + lastname + "</div> \
+						<div class='speakerImage'><img src='https://www2.arccorp.com/globalassets/home2/2019/speakers/" + firstname.toLowerCase() + "-" + lastname.replace("'", "").toLowerCase() + ".jpg' alt='" + firstname + "-" + lastname.replace("'", "") + "'></div> \
+						<div class='speakerName'>" + firstname + " " + lastname.replace("'", "&apos;") + "</div> \
 						<div class='speakerTitle'>" + title + "</div> \
 						<div class='speakerCompany'>" + org + "</div> \
             <div class='website1'><a target='_blank' href='" + website1 + "'>" + website1 + "</a></div> \
             <div class='website1'><a target='_blank' href='" + website2 + "'>" + website2 + "</a></div> \
-				    <div class='speakerSocial " + (linkedin ? " " : "hideSocial")  + "'> \
+				    <div class='speakerSocial " + (linkedin ? " " : "hideSocial") + "'> \
 				      <div class='speakerLinkedin'> \
 				        <a target='_blank' href='" + linkedin + "'><img src='https://www.arctravelconnect.com/globalassets/home2/2019/svg/LINKEDIN-ICON.svg' alt=''></a> \
 				      </div> \
@@ -159,8 +178,80 @@ fs.readdirAsync('./files/').then(function(filenames) {
       var totalData = templateData + "\n" + bioData;
 
       fs.writeFile('./' + name.split('.')[0] + '.html', totalData, function() {
-        console.log('done')
+        console.log('./' + name.split('.')[0] + '.html written to root directory');
+        console.log('================================');
       });
     }
+
+    if (filename == 'agenda' && extension == 'xls') {
+
+      //files[0].sort(compareColumn());
+      files[i].sort(compareColumn);
+
+      var templateData = "";
+
+      for (var j = 0; j < files[i].length; j++) {
+
+
+
+        var file = files[i][j];
+        var sessionName = file['Name'];
+        var sessionDescription = file['Description'];
+
+        var startTime = file['Start Time'];
+        var startDate = startTime.split(" ")[0];
+        startTime = startTime.split(" ")[1].replace(":", "");
+        startTime = moment(startTime, "hmm").format("h:mm");
+
+        var endTime = file['End Time'];
+        var endDate = endTime.split(" ")[0];
+        endTime = endTime.split(" ")[1].replace(":", "");
+        endTime = moment(endTime, "hmm").format("h:mm a");
+
+        var speaker1first = file['Speaker 1 First Name'];
+        var speaker1last = file['Speaker 1 Last Name'];
+        var speaker1role = file['Speaker 1 Role'];
+        var speaker1Title = file['Speaker 1 Title'];
+        var speaker1Bio = file['Speaker 1 Bio'];
+        var speaker1Org = file['Speaker 1 Organization Name'];
+
+        var speaker2first = file['Speaker 2 First Name'];
+        var speaker2last = file['Speaker 2 Last Name'];
+        var speaker2role = file['Speaker 2 Role'];
+        var speaker2Title = file['Speaker 2 Title'];
+        var speaker2Bio = file['Speaker 2 Bio'];
+        var speaker2Org = file['Speaker 2 Organization Name'];
+
+
+        var template = '<div class="row schedule-item"> \
+            <div class="col-md-3"> \
+                <div class="schedule-time">' + startTime + ' - ' + endTime + '</div> \
+            </div> \
+             <div class="col-md-3"> \
+                <div class="schedule-type"></div> \
+            </div> \
+            <div class="col-md-6"> \
+                <div class="schedule-name">' + sessionName + '</div> \
+                <p class="schedule-participants">' + (sessionDescription ? sessionDescription : " ") + '</p>  \
+                <p class="schedule-participants"> ' +
+                (speaker1first ? "<strong>Speakers:</strong><br/><a href='/tc2019/speakers#" + speaker1first.toLowerCase() + "-" + speaker1last.replace("'", "").toLowerCase() +"'><strong>" + speaker1first + " " + speaker1last + "</strong></a>, " + speaker1Title + ", " + speaker1Org + "<br/>" + (speaker2first ? "<a href='/tc2019/speakers#"
+                + speaker2first.toLowerCase() + "-" + speaker2last.replace("'", "").toLowerCase() +"'><strong>" + speaker2first + " " + speaker2last + "</strong></a>, " + speaker2Title + ", " + speaker2Org : " ") : " ") + '</p>  \
+            </div>  \
+        </div>';
+
+        templateData += "\n" + template;
+
+        var preconf = "";
+        var day1 = "";
+        var day2 = "";
+      }
+
+      fs.writeFile('./' + filename + '.html', templateData, function() {
+        console.log('./' + filename + '.html written to root directory');
+        console.log('================================');
+      });
+
+    }
+
   }
 });
