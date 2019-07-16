@@ -1,5 +1,7 @@
 if (typeof require !== 'undefined') XLSX = require('xlsx');
 
+const order = ["Kirby", "Simi", "Webb", "Katz", "Best", "Morin", "D'Astolfo", "Barth", "Moscovici" , "Radcliffe", "Heywood", "Hegeman", "Premo", "Reishus" ];
+
 var moment = require('moment');
 
 var fs = require('fs'),
@@ -114,8 +116,6 @@ fs.readdirAsync('./files/').then(function(filenames) {
 
       var bioData = "";
 
-      var order = ["Webb", "Simi", "Kirby", "Barth", "Best", "D'Astolfo", "Hegeman", "Premo", "Reishus" ];
-
       for (var j = 0; j < order.length; j++) {
 
         console.log(order.length);
@@ -192,11 +192,14 @@ fs.readdirAsync('./files/').then(function(filenames) {
 
       for (var j = 0; j < files[i].length; j++) {
 
-
-
         var file = files[i][j];
+
+        var uniqueid = file['Unique ID'];
+
         var sessionName = file['Name'];
         var sessionDescription = file['Description'];
+
+        var tags = file['Tags (comma-separated)'];
 
         var startTime = file['Start Time'];
         var startDate = startTime.split(" ")[0];
@@ -223,12 +226,12 @@ fs.readdirAsync('./files/').then(function(filenames) {
         var speaker2Org = file['Speaker 2 Organization Name'];
 
 
-        var template = '<div class="row schedule-item"> \
+        var template = '<div class="row schedule-item" id="' + uniqueid + '"> \
             <div class="col-md-3"> \
                 <div class="schedule-time">' + startTime + ' - ' + endTime + '</div> \
             </div> \
              <div class="col-md-3"> \
-                <div class="schedule-type"></div> \
+                <div class="schedule-type">' + (tags ? tags : " ") + '</div> \
             </div> \
             <div class="col-md-6"> \
                 <div class="schedule-name">' + sessionName + '</div> \
