@@ -1,6 +1,7 @@
 if (typeof require !== 'undefined') XLSX = require('xlsx');
 
-const order = ["Kirby", "Simi", "Webb", "Katz", "Best", "Morin", "D'Astolfo", "Barth", "Moscovici" , "Radcliffe", "Heywood", "Hegeman", "Premo", "Reishus" ];
+const order = ["Kirby", "Simi", "Webb", "Katz", "Harvey", "Best", "Ali", "Lamping", "D'Astolfo" , "Moscovici", "Radcliffe", "Morin", "Hegeman", "Barth", "Tonnessen", "Heywood", "Swanston", "Armstrong", "Share", "Premo", "Reishus", "Oliver", "Barber", "Gillespie", "Younger", "Nass", "Hattingh", "Coleman"
+ ];
 
 var moment = require('moment');
 
@@ -225,6 +226,28 @@ fs.readdirAsync('./files/').then(function(filenames) {
         var speaker2Bio = file['Speaker 2 Bio'];
         var speaker2Org = file['Speaker 2 Organization Name'];
 
+        var speaker3first = file['Speaker 3 First Name'];
+        var speaker3last = file['Speaker 3 Last Name'];
+        var speaker3role = file['Speaker 3 Role'];
+        var speaker3Title = file['Speaker 3 Title'];
+        var speaker3Bio = file['Speaker 3 Bio'];
+        var speaker3Org = file['Speaker 3 Organization Name'];
+
+        var speaker4first = file['Speaker 4 First Name'];
+        var speaker4last = file['Speaker 4 Last Name'];
+        var speaker4role = file['Speaker 4 Role'];
+        var speaker4Title = file['Speaker 4 Title'];
+        var speaker4Bio = file['Speaker 4 Bio'];
+        var speaker4Org = file['Speaker 4 Organization Name'];
+
+        var speaker5first = file['Speaker 5 First Name'];
+        var speaker5last = file['Speaker 5 Last Name'];
+        var speaker5role = file['Speaker 5 Role'];
+        var speaker5Title = file['Speaker 5 Title'];
+        var speaker5Bio = file['Speaker 5 Bio'];
+        var speaker5Org = file['Speaker 5 Organization Name'];
+
+        var location = file['Location Name'];
 
         var template = '<div class="row schedule-item" id="' + uniqueid + '"> \
             <div class="col-md-3"> \
@@ -236,9 +259,19 @@ fs.readdirAsync('./files/').then(function(filenames) {
             <div class="col-md-6"> \
                 <div class="schedule-name">' + sessionName + '</div> \
                 <p class="schedule-participants">' + (sessionDescription ? sessionDescription : " ") + '</p>  \
-                <p class="schedule-participants"> ' +
-                (speaker1first ? "<strong>Speakers:</strong><br/><a href='/tc2019/speakers#" + speaker1first.toLowerCase() + "-" + speaker1last.replace("'", "").toLowerCase() +"'><strong>" + speaker1first + " " + speaker1last + "</strong></a>, " + speaker1Title + ", " + speaker1Org + "<br/>" + (speaker2first ? "<a href='/tc2019/speakers#"
-                + speaker2first.toLowerCase() + "-" + speaker2last.replace("'", "").toLowerCase() +"'><strong>" + speaker2first + " " + speaker2last + "</strong></a>, " + speaker2Title + ", " + speaker2Org : " ") : " ") + '</p>  \
+                <p class="schedule-participants"> ' + (speaker1first ? "<strong>Speakers:</strong><br/>" +
+
+                  (speaker1first ? "<a href='/tc2019/speakers#" + speaker1first.toLowerCase() + "-" + speaker1last.replace("'", "").toLowerCase() + "'><strong>" + speaker1first + " " + speaker1last + "</strong></a>, " + speaker1Title + ", " + speaker1Org + "<br/>" : " ") +
+
+                  (speaker2first ? "<a href='/tc2019/speakers#" + speaker2first.toLowerCase() + "-" + speaker2last.replace("'", "").toLowerCase() + "'><strong>" + speaker2first + " " + speaker2last + "</strong></a>, " + speaker2Title + ", " + speaker2Org + "<br/>" : " ") +
+
+                  (speaker3first ? "<a href='/tc2019/speakers#" + speaker3first.toLowerCase() + "-" + speaker3last.replace("'", "").toLowerCase() + "'><strong>" + speaker3first + " " + speaker3last + "</strong></a>, " + speaker3Title + ", " + speaker3Org + "<br/>" : " ") +
+
+                  (speaker4first ? "<a href='/tc2019/speakers#" + speaker4first.toLowerCase() + "-" + speaker4last.replace("'", "").toLowerCase() + "'><strong>" + speaker4first + " " + speaker4last + "</strong></a>, " + speaker4Title + ", " + speaker4Org + "<br/>" : " ") +
+
+                  (speaker5first ? "<a href='/tc2019/speakers#" + speaker5first.toLowerCase() + "-" + speaker5last.replace("'", "").toLowerCase() + "'><strong>" + speaker5first + " " + speaker5last + "</strong></a>, " + speaker5Title + ", " + speaker5Org + "<br/>" : " ") : " ") +
+                 '</p>  \
+                <p class="schedule-participants"> ' + (location ? "<strong>Location:</strong><br/>" + location: "") + '</p> \
             </div>  \
         </div>';
 
